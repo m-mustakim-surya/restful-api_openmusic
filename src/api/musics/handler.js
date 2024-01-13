@@ -1,8 +1,9 @@
 const autoBind = require('auto-bind')
 
 class MusicsHandler {
-  constructor (service, validator) {
-    this._service = service
+  constructor (services, validator) {
+    this._albumsService = services.albumsService
+    this._songsService = services.songsService
     this._validator = validator
 
     autoBind(this)
@@ -12,7 +13,7 @@ class MusicsHandler {
     this._validator.validateAlbumPayload(request.payload)
     const { name, year } = request.payload
 
-    const albumId = await this._service.addAlbum({ name, year })
+    const albumId = await this._albumsService.addAlbum({ name, year })
 
     const response = h.response({
       status: 'success',
@@ -29,8 +30,8 @@ class MusicsHandler {
   async getAlbumByIdHandler (request, h) {
     const { id } = request.params
 
-    const album = await this._service.getAlbumById(id)
-    const songs = await this._service.getSongsByAlbumId(id)
+    const album = await this._albumsService.getAlbumById(id)
+    const songs = await this._albumsService.getSongsByAlbumId(id)
 
     const albumSongs = { ...album, songs }
 
@@ -47,7 +48,7 @@ class MusicsHandler {
     this._validator.validateAlbumPayload(request.payload)
     const { id } = request.params
 
-    await this._service.editAlbumById(id, request.payload)
+    await this._albumsService.editAlbumById(id, request.payload)
 
     return {
       status: 'success',
@@ -58,7 +59,7 @@ class MusicsHandler {
   async deleteAlbumByIdHandler (request, h) {
     const { id } = request.params
 
-    await this._service.deleteAlbumById(id)
+    await this._albumsService.deleteAlbumById(id)
 
     return {
       status: 'success',
@@ -70,7 +71,7 @@ class MusicsHandler {
     this._validator.validateSongPayload(request.payload)
     const { title, year, genre, performer, duration, albumId } = request.payload
 
-    const songId = await this._service.addSong({ title, year, genre, performer, duration, albumId })
+    const songId = await this._songsService.addSong({ title, year, genre, performer, duration, albumId })
 
     const response = h.response({
       status: 'success',
@@ -87,7 +88,7 @@ class MusicsHandler {
   async getSongsHandler (request, h) {
     const { title, performer } = request.query
 
-    const songs = await this._service.getSongs(title, performer)
+    const songs = await this._songsService.getSongs(title, performer)
 
     return {
       status: 'success',
@@ -101,7 +102,7 @@ class MusicsHandler {
   async getSongByIdHandler (request, h) {
     const { id } = request.params
 
-    const song = await this._service.getSongById(id)
+    const song = await this._songsService.getSongById(id)
 
     return {
       status: 'success',
@@ -116,7 +117,7 @@ class MusicsHandler {
     this._validator.validateSongPayload(request.payload)
     const { id } = request.params
 
-    await this._service.editSongById(id, request.payload)
+    await this._songsService.editSongById(id, request.payload)
 
     return {
       status: 'success',
@@ -127,7 +128,7 @@ class MusicsHandler {
   async deleteSongByIdHandler (request, h) {
     const { id } = request.params
 
-    await this._service.deleteSongById(id)
+    await this._songsService.deleteSongById(id)
 
     return {
       status: 'success',

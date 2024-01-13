@@ -2,12 +2,14 @@ require('dotenv').config()
 
 const Hapi = require('@hapi/hapi')
 const musics = require('./api/musics')
-const MusicsService = require('./services/postgres/MusicsService')
+const AlbumsService = require('./services/postgres/AlbumsService')
+const SongsService = require('./services/postgres/SongsService')
 const MusicsValidator = require('./validator/musics')
 const ClientError = require('./exceptions/ClientError')
 
 const init = async () => {
-  const musicsService = new MusicsService()
+  const albumsService = new AlbumsService()
+  const songsService = new SongsService()
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -22,7 +24,7 @@ const init = async () => {
   await server.register({
     plugin: musics,
     options: {
-      service: musicsService,
+      services: { albumsService, songsService },
       validator: MusicsValidator
     }
   })
