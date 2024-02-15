@@ -1,4 +1,5 @@
 const autoBind = require('auto-bind')
+const config = require('../../utils/config')
 
 class UploadsHandler {
   constructor (storageService, albumsService, validator) {
@@ -21,7 +22,7 @@ class UploadsHandler {
       status: 'success',
       message: 'Sampul berhasil diunggah',
       data: {
-        fileLocation: `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`
+        fileLocation: `http://${config.app.host}:${config.app.port}/upload/images/${filename}`
       }
     })
     response.code(201)

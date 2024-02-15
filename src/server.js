@@ -38,6 +38,8 @@ const UploadsValidator = require('./validator/uploads')
 
 const CacheService = require('./services/redis/CacheService')
 
+const config = require('./utils/config')
+
 const init = async () => {
   const cacheService = new CacheService()
   const usersService = new UsersService()
@@ -48,8 +50,8 @@ const init = async () => {
   const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/file/images'))
 
   const server = Hapi.server({
-    port: process.env.PORT,
-    host: process.env.HOST,
+    port: config.app.port,
+    host: config.app.host,
     routes: {
       cors: {
         origin: ['*']
@@ -67,12 +69,12 @@ const init = async () => {
   ])
 
   server.auth.strategy('musicsapp_jwt', 'jwt', {
-    keys: process.env.ACCESS_TOKEN_KEY,
+    keys: config.jwt.accessTokenKey,
     verify: {
       aud: false,
       iss: false,
       sub: false,
-      maxAgeSec: process.env.ACCESS_TOKEN_AGE
+      maxAgeSec: config.jwt.accessTokenAge
     },
     validate: (artifacts) => ({
       isValid: true,

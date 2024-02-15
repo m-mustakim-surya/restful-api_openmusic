@@ -1,4 +1,5 @@
 const autoBind = require('auto-bind')
+const config = require('../../utils/config')
 
 class AlbumsHandler {
   constructor (service, validator) {
@@ -30,7 +31,7 @@ class AlbumsHandler {
     const { id } = request.params
 
     const album = await this._service.getAlbumById(id)
-    album.coverUrl = (album.coverUrl) ? `http://${process.env.HOST}:${process.env.PORT}/upload/images/${album.coverUrl}` : null
+    album.coverUrl = (album.coverUrl) ? `http://${config.app.host}:${config.app.port}/upload/images/${album.coverUrl}` : null
     const songs = await this._service.getSongsByAlbumId(id)
 
     const albumSongs = { ...album, songs }
