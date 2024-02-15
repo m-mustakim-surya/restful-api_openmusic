@@ -66,6 +66,54 @@ class AlbumsHandler {
       message: 'Menghapus album berdasarkan id'
     }
   }
+
+  async postAlbumLikeHandler (request, h) {
+    const { id: credentialId } = request.auth.credentials
+    const { id: albumId } = request.params
+
+    await this._service.verifyAlbumExist(albumId)
+    await this._service.verifyAlbumLikeExist(credentialId, albumId)
+    const albumLikeId = await this._service.addAlbumLike(credentialId, albumId)
+
+    const response = h.response({
+      status: 'success',
+      message: 'Menyukai album',
+      data: {
+        albumLikeId
+      }
+    })
+
+    response.code(201)
+    return response
+  }
+
+  async deleteAlbumLikeHandler (request, h) {
+    const { id: credentialId } = request.auth.credentials
+    const { id: albumId } = request.params
+
+    await this._service.deleteAlbumLike(credentialId, albumId)
+
+    return {
+      status: 'success',
+      message: 'Batal menyukai album'
+    }
+  }
+
+  async getAlbumLikesHandler (request, h) {
+    const { id: albumId } = request.params
+
+    const { albumLikes, source } = await this._service.getAlbumLikes(albumId)
+
+    const response = h.response({
+      status: 'success',
+      message: 'Melihat jumlah yang menyukai album',
+      data: albumLikes
+    })
+
+    response.header('X-Data-Source', source)
+    response.code(200)
+    return response
+  }
 }
 
 module.exports = AlbumsHandler
