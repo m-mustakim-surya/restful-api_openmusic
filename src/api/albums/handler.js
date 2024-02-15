@@ -30,6 +30,7 @@ class AlbumsHandler {
     const { id } = request.params
 
     const album = await this._service.getAlbumById(id)
+    album.coverUrl = (album.coverUrl) ? `http://${process.env.HOST}:${process.env.PORT}/upload/images/${album.coverUrl}` : null
     const songs = await this._service.getSongsByAlbumId(id)
 
     const albumSongs = { ...album, songs }
